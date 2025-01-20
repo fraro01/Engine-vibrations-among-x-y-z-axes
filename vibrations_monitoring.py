@@ -93,6 +93,7 @@ z_threshold = 1.0001*((np.mean(minor_fault_z) + np.mean(moderate_fault_z))/2)
 
 ################################## DASHBOARD ##################################
 app = dash.Dash(__name__) #dash constructor for intializing the app
+server = app.server #THIS IS FOR RENDER DEPLOY
 
 app.layout = html.Div([ 
     # Contenitore flex per il titolo e il menu a tendina
