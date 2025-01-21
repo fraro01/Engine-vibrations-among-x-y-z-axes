@@ -13,6 +13,7 @@ This repository contains two main elements:
   <img src="feature_importance.JPG" width="50%">
   
 - **Dashboard code:** code for the dashboard synchronized on [Render](https://engine-vibrations-among-xyz-axes.onrender.com), it is a dashboard that shows the relations between the vibrations among the 3 axes of the engine with the fault status, based on the **Root Mean Square** and the **Fast Fourier Transform**, with thresholds and baselines added in Frequency Spectral representation.
+[Dashboard link](https://engine-vibrations-among-xyz-axes.onrender.com/)
   <img src="engine_axis.JPG" width="33%">
 
   
