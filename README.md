@@ -11,5 +11,5 @@ This repository contains two main elements:
 - **Jupyter Notebook:** contains the data analysis of the data collected from Kaggle, with explanations and details of all the statistics behind them.
 - **Dashboard code:** code for the dashboard synchronized on [Render](https://engine-vibrations-among-xyz-axes.onrender.com), it is a dashboard that shows the relations between the vibrations among the 3 axes of the engine with the fault status, based on the **Root Mean Square** and the **Fast Fourier Transform**, with thresholds and baselines added in Frequency Spectral representation.
 
-![engine_axis.JPG](/assets/images/engine_axis.JPG)
+![engine_axis.JPG](/main/engine_axis.JPG)
 
