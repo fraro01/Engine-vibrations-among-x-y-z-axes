@@ -21,10 +21,10 @@ import plotly.express as px
 data = pd.read_csv("engine_failure_dataset.csv")
 
 #suddivisione pandas series dei dati di interesse
-data_vibration_x = data["Vibration_X"]
-data_vibration_y = data["Vibration_Y"]
-data_vibration_z = data["Vibration_Z"]
-data_fault = data["Fault_Condition"]
+data_vibration_x = data["Vibration_X [mm/s]"]
+data_vibration_y = data["Vibration_Y [mm/s]"]
+data_vibration_z = data["Vibration_Z [mm/s]"]
+data_fault = data["Fault_Condition [-]"]
 
 #data frame con solo i dati di interesse
 combined_df = pd.concat([data_vibration_x, 
@@ -35,20 +35,20 @@ combined_df = pd.concat([data_vibration_x,
 
 #raggruppamento dei valori con la severità di fault
 #X
-normal_x = combined_df["Vibration_X"][combined_df["Fault_Condition"] == 0]
-minor_fault_x = combined_df["Vibration_X"][combined_df["Fault_Condition"] == 1]
-moderate_fault_x = combined_df["Vibration_X"][combined_df["Fault_Condition"] == 2]
-severe_fault_x = combined_df["Vibration_X"][combined_df["Fault_Condition"] == 3]
+normal_x = combined_df["Vibration_X [mm/s]"][combined_df["Fault_Condition [-]"] == 0]
+minor_fault_x = combined_df["Vibration_X [mm/s]"][combined_df["Fault_Condition [-]"] == 1]
+moderate_fault_x = combined_df["Vibration_X [mm/s]"][combined_df["Fault_Condition [-]"] == 2]
+severe_fault_x = combined_df["Vibration_X [mm/s]"][combined_df["Fault_Condition [-]"] == 3]
 #Y
-normal_y = combined_df["Vibration_Y"][combined_df["Fault_Condition"] == 0]
-minor_fault_y = combined_df["Vibration_Y"][combined_df["Fault_Condition"] == 1]
-moderate_fault_y = combined_df["Vibration_Y"][combined_df["Fault_Condition"] == 2]
-severe_fault_y = combined_df["Vibration_Y"][combined_df["Fault_Condition"] == 3]
+normal_y = combined_df["Vibration_Y [mm/s]"][combined_df["Fault_Condition [-]"] == 0]
+minor_fault_y = combined_df["Vibration_Y [mm/s]"][combined_df["Fault_Condition [-]"] == 1]
+moderate_fault_y = combined_df["Vibration_Y [mm/s]"][combined_df["Fault_Condition [-]"] == 2]
+severe_fault_y = combined_df["Vibration_Y [mm/s]"][combined_df["Fault_Condition [-]"] == 3]
 #Z
-normal_z = combined_df["Vibration_Z"][combined_df["Fault_Condition"] == 0]
-minor_fault_z = combined_df["Vibration_Z"][combined_df["Fault_Condition"] == 1]
-moderate_fault_z = combined_df["Vibration_Z"][combined_df["Fault_Condition"] == 2]
-severe_fault_z = combined_df["Vibration_Z"][combined_df["Fault_Condition"] == 3]
+normal_z = combined_df["Vibration_Z [mm/s]"][combined_df["Fault_Condition [-]"] == 0]
+minor_fault_z = combined_df["Vibration_Z [mm/s]"][combined_df["Fault_Condition [-]"] == 1]
+moderate_fault_z = combined_df["Vibration_Z [mm/s]"][combined_df["Fault_Condition [-]"] == 2]
+severe_fault_z = combined_df["Vibration_Z [mm/s]"][combined_df["Fault_Condition [-]"] == 3]
 
 #################### FINE DATASET E DATA PRE-PROCESSING #######################
 
@@ -215,7 +215,7 @@ def update_rms_graph(selected_axis):
 def update_fft_graph(selected_axis):
     
     # Estrazione dei dati selezionati e trasformazione di essi in un array numpy
-    signal = combined_df[selected_axis].to_numpy()
+    signal = combined_df[selected_axis + ' [mm/s]'].to_numpy()
     
     # Calcolo della FFT
     N = len(signal)  # Numero di campioni
