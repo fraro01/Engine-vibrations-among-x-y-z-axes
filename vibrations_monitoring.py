@@ -27,9 +27,11 @@ data_vibration_z = data["Vibration_Z"]
 data_fault = data["Fault_Condition"]
 
 #data frame con solo i dati di interesse
-# Calcolo dell'RMS
-combined_df = pd.concat([data_vibration_x, data_vibration_y, data_vibration_z, \
-                               data_fault], axis=1) #axis 1 indica l'orientamento di combinazione orizzontale
+combined_df = pd.concat([data_vibration_x, 
+                         data_vibration_y, 
+                         data_vibration_z,
+                         data_fault], 
+                        axis=1) #axis 1 indica l'orientamento di combinazione orizzontale
 
 #raggruppamento dei valori con la severità di fault
 #X
@@ -98,66 +100,71 @@ server = app.server #THIS IS FOR RENDER DEPLOY
 app.layout = html.Div([ 
     # Contenitore flex per il titolo e il menu a tendina
     html.Div([
-        # Titolo della dashboard
-        html.H1(children='Engine Failure Detection',
-                style={
-                    'height': '100%', 
-                    'width':'50%',
-                    'padding':'0',
-                    'margin':'0',
-                    'border':'0'
+            # Titolo della dashboard
+            html.H1(children='Engine Failure Detection',
+                    style={
+                        'height': '100%', 
+                        'width':'50%',
+                        'padding':'0',
+                        'margin':'0',
+                        'border':'0'
+                        }
+                    ),
+            
+            # Dropdown per selezionare l'asse di vibrazione
+            dcc.Dropdown(
+                        id='vibration-axis-dropdown',
+                        options=[
+                                {'label': 'Vibration X', 'value': 'Vibration_X'},
+                                {'label': 'Vibration Y', 'value': 'Vibration_Y'},
+                                {'label': 'Vibration Z', 'value': 'Vibration_Z'},
+                                ],
+                        value='Vibration_X',  # Valore di default
+                        style={
+                            'height': '100%', 
+                            'width':'50%',
+                            'padding': '0', 
+                            'margin': '0', 
+                            'border': '0', 
+                            },
+                        )
+            ], 
+            #stile generale di titolo + menu a tendina
+            style={
+                'display': 'flex',  # Usa flexbox per disporre gli elementi orizzontalmente
+                'width': '100%'  # Occupa tutta la larghezza disponibile
                 }
         ),
+    
+        # Grafico a barre con gli RMS per ciascun livello di fault
+        dcc.Graph(id='rms-bar-graph',   
+            style={'height': '49%', 
+                   'width': '100%',
+                   'padding':'0', 
+                   'margin':'0',
+                   'border':'0'
+                   }
+                ),
         
-        # Dropdown per selezionare l'asse di vibrazione
-        dcc.Dropdown(
-            id='vibration-axis-dropdown',
-            options=[
-                {'label': 'Vibration X', 'value': 'Vibration_X'},
-                {'label': 'Vibration Y', 'value': 'Vibration_Y'},
-                {'label': 'Vibration Z', 'value': 'Vibration_Z'},
-            ],
-            value='Vibration_X',  # Valore di default
-            style={
-                'height': '100%', 
-                'width':'50%',
-                'padding': '0', 
-                'margin': '0', 
-                'border': '0', 
-            },
-        )
-    ], style={
-        'display': 'flex',  # Usa flexbox per disporre gli elementi orizzontalmente
-        'alignItems': 'center',  # Allinea verticalmente gli elementi al centro
-        'justifyContent': 'space-between',  # Spazio tra il titolo e il dropdown
-        'width': '100%'  # Occupa tutta la larghezza disponibile
-    }),
+        # Grafico per la FFT
+        dcc.Graph(id='fft-graph',
+            style={'height': '49%', 
+                   'width': '100%',
+                   'padding':'0', 
+                   'margin':'0',
+                   'border':'0'
+                   }
+                ),
     
-    # Grafico a barre con gli RMS per ciascun livello di fault
-    dcc.Graph(id='rms-bar-graph',   
-        style={'height': '49%', 
-               'width': '100%',
-               'padding':'0', 
-               'margin':'0',
-               'border':'0'}
-    ),
-    
-    # Grafico per la FFT
-    dcc.Graph(id='fft-graph',
-        style={'height': '49%', 
-               'width': '100%',
-               'padding':'0', 
-               'margin':'0',
-               'border':'0'}
-    ),
-    
-], style={'height':'100vh', 
+    ],  #stile Globale
+    style={'height':'100vh', 
           'overflow':'hidden', 
           'padding':'0', 
           'margin':'0',
           'border':'0'
           }
-          )
+          
+ )
 
 ################################ FINE DASHBOARD ###############################
 
@@ -168,10 +175,10 @@ app.layout = html.Div([
 @app.callback(
                 Output('rms-bar-graph', 'figure'),
                 Input('vibration-axis-dropdown', 'value')
-                )
+                )    #input value
 def update_rms_graph(selected_axis):
     
-    rms_data = rms_values[selected_axis]
+    rms_data = rms_values[selected_axis] #dal dizionario prendiamo i dati di interesse sulla selezione
     
     # Definizione dei colori per ogni livello di guasto
     color_map = {
@@ -179,7 +186,7 @@ def update_rms_graph(selected_axis):
         'Minor Fault': 'yellow',
         'Moderate Fault': 'orange',
         'Severe Fault': 'red'
-    }
+        }
     
     # Creazione del DataFrame per il grafico
     df = pd.DataFrame({
@@ -204,21 +211,22 @@ def update_rms_graph(selected_axis):
 @app.callback(
                 Output('fft-graph', 'figure'),
                 Input('vibration-axis-dropdown', 'value')
-                )
+                )    #input value
 def update_fft_graph(selected_axis):
     
-    # Estrazione dei dati selezionati
+    # Estrazione dei dati selezionati e trasformazione di essi in un array numpy
     signal = combined_df[selected_axis].to_numpy()
     
     # Calcolo della FFT
     N = len(signal)  # Numero di campioni
     fft_values = rfft(signal)
-    fft_freqs = rfftfreq(N, d=1)  # Assumendo una frequenza di campionamento di 1 Hz
+    fft_freqs = rfftfreq(N, d=1)  #Assumendo una frequenza di campionamento di 1 Hz
+    #a causa dell'unità di misura della vibrazione [mm/s]
     
     # Creazione del DataFrame per la FFT
     df_fft = pd.DataFrame({
-        'Frequency': fft_freqs,  # Escludiamo la componente DC (frequenza 0)
-        'Amplitude': np.abs(fft_values)
+        'Frequency': fft_freqs[1:],  # Escludiamo la componente DC (frequenza 0)
+        'Amplitude': np.abs(fft_values)[1:]
     })
     
     # Creazione del grafico
@@ -265,6 +273,27 @@ def update_fft_graph(selected_axis):
                             )
                         ]
                     )
+    
+    # Aggiunta di tracce fittizie per la legenda
+    figure.add_trace(
+        dict(
+            x=[None],  # Nessun dato effettivo da plottare
+            y=[None],
+            mode='markers',
+            marker=dict(color="green"),
+            name="Baseline"  # Etichetta della legenda
+        )
+    )
+    
+    figure.add_trace(
+        dict(
+            x=[None],
+            y=[None],
+            mode='markers',
+            marker=dict(color="red"),
+            name="Threshold"  # Etichetta della legenda
+        )
+    )
    
     
     
@@ -273,7 +302,7 @@ def update_fft_graph(selected_axis):
 ############################ FINE LOGICHE DASHBOARD ###########################
 
 
-
+#running
 if __name__ == '__main__':
     app.run_server(debug=False)
 
